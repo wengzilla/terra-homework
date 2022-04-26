@@ -16,13 +16,15 @@
             "uluna": 5000000
           }
         },
-        "instantiateMsg":{ 
+        "instantiateMsg": {
           "decimals": 6,
-          "initial_balances": [{ "address": "terra18yfx9skmexwxvpxal6wtc5unjvcc68xtgl0l56", "amount":"1000000000000" }],
-          "name": "Lemon Token", 
-          "symbol": "LMON",
-          "mint": { "minter": "terra18yfx9skmexwxvpxal6wtc5unjvcc68xtgl0l56", "cap":"1000000000000000" }
-      }
+          "initial_balances": [
+            { "address": "terra1y8cvs930a0llrs8gq5p4w9wmdyrh6kutyqx6lw", "amount": "1000000000000" }
+          ],
+          "name": "Hype Token",
+          "symbol": "HYPE",
+          "mint": { "minter": "terra1y8cvs930a0llrs8gq5p4w9wmdyrh6kutyqx6lw", "cap": "1000000000000000" }
+        }
       }
     }
   },
