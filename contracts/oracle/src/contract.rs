@@ -6,7 +6,7 @@ use cosmwasm_std::{
 use cw2::set_contract_version;
 
 use crate::error::{ContractError};
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, PriceResponse};
 use crate::state::{STATE, State};
 
 
@@ -63,7 +63,8 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
       QueryMsg::QueryPrice {} => { 
         let res = STATE.load(deps.storage)?.price;
-        to_binary(&res)
+        let price_response = PriceResponse { price: res };
+        to_binary(&price_response)
       }
     }
 }
@@ -87,8 +88,8 @@ mod tests {
 
         // it worked, let's query the state
         let res = query(deps.as_ref(), mock_env(), QueryMsg::QueryPrice {}).unwrap();
-        let price: u64 = from_binary(&res).unwrap();
-        assert_eq!(17, price);
+        let price_response: PriceResponse = from_binary(&res).unwrap();
+        assert_eq!(17, price_response.price);
     }
 
     #[test]
@@ -101,8 +102,8 @@ mod tests {
       
       // it worked, let's query the state
       let res = query(deps.as_ref(), mock_env(), QueryMsg::QueryPrice {}).unwrap();
-      let price: u64 = from_binary(&res).unwrap();
-      assert_eq!(17, price);
+      let price_response: PriceResponse = from_binary(&res).unwrap();
+      assert_eq!(17, price_response.price);
 
       let info = mock_info("oracle", &coins(2, "token"));
       let msg = ExecuteMsg::UpdatePrice { price: 18 };
@@ -110,7 +111,7 @@ mod tests {
 
       // it worked, let's query the state
       let res = query(deps.as_ref(), mock_env(), QueryMsg::QueryPrice {}).unwrap();
-      let price: u64 = from_binary(&res).unwrap();
-      assert_eq!(18, price);
+      let price_response: PriceResponse = from_binary(&res).unwrap();
+      assert_eq!(18, price_response.price);
     }
 }

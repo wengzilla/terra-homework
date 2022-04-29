@@ -17,13 +17,8 @@ const client = new LCDClient({
 import { MnemonicKey } from '@terra-money/terra.js';
 
 const wallets = {
-  admin: client.wallet(new MnemonicKey(keys.default.sampleKey1)),
-  wallet1: client.wallet(
-    new MnemonicKey({
-      mnemonic:
-        'warm lucky circle bicycle quote lemon omit one robot include fruit fix coach parrot identify glance foil random fox tornado diagram twist flat picnic',
-    })
-  ),
+  admin: client.wallet(new MnemonicKey(keys.default.adminKey)),
+  wallet1: client.wallet(new MnemonicKey(keys.default.sampleKey2)),
 };
 
 export { client, wallets };
