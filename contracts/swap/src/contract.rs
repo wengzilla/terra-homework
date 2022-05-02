@@ -50,10 +50,8 @@ pub fn execute(
 ) -> Result<Response, ContractError> {
     match msg {
       ExecuteMsg::Buy {} => return try_buy(deps, env, info, msg),
-      ExecuteMsg::Withdraw { amount } => return try_withdraw(deps, env, info, amount),
-      _ => Err(ContractError::NotImplemented {})
+      ExecuteMsg::Withdraw { amount } => return try_withdraw(deps, env, info, amount)
     }
-    
 }
 
 pub fn try_buy(deps: DepsMut, env: Env, info: MessageInfo, _msg: ExecuteMsg) -> Result<Response, ContractError> {
@@ -66,7 +64,7 @@ pub fn try_buy(deps: DepsMut, env: Env, info: MessageInfo, _msg: ExecuteMsg) -> 
   let luna_received: Uint128 = info
     .funds
     .iter()
-    .find(|c| c.denom == "uluna")
+    .find(|c| c.denom == String::from("uluna"))
     .map(|c| Uint128::from(c.amount))
     .unwrap_or_else(Uint128::zero);
 
@@ -120,7 +118,6 @@ pub fn try_withdraw(deps: DepsMut, env: Env, info: MessageInfo, amount: i32) -> 
 }
 
 fn get_price(deps: Deps) -> Result<PriceResponse, ContractError> {
-  // let oracle_address = String::from("terra1j3l5strv3hjlujuyvs8s9vgal02gsw6prjwl5j");
   let oracle_address = STATE.load(deps.storage)?.oracle_address;
   let price_response: PriceResponse = deps.querier.query_wasm_smart(
       oracle_address,
@@ -145,18 +142,24 @@ pub fn migrate(_deps: DepsMut, _env: Env, _msg: Empty) -> StdResult<Response> {
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
-    // TODO
-    Err(StdError::generic_err("Not implemented"))
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+      QueryMsg::QueryPrice {} => { 
+        let price_response: PriceResponse = get_price(deps).unwrap();
+        return to_binary(&price_response)
+      },
+      QueryMsg::Balance { address } => {
+        return to_binary(&{ address })
+      }
+    }
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use cosmwasm_std::testing::{mock_env, mock_info, MOCK_CONTRACT_ADDR};
     use cosmwasm_std::{coins, from_binary, Addr};
-    use shared::mock_querier::{mock_dependencies};
+    use testing::mock_querier::{mock_dependencies};
 
     const TOKEN: &str = "hyp0000";
     const ORACLE: &str = "oracle000";
@@ -168,6 +171,21 @@ mod tests {
       let msg = InstantiateMsg { token_address: Addr::unchecked(TOKEN), oracle_address: Addr::unchecked(ORACLE) };
       let info = mock_info("creator", &coins(1000, "earth"));
       let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+    }
+
+    #[test]
+    fn try_query() {
+      let mut deps = mock_dependencies(&coins(2, "token"));
+      deps.querier.with_oracle_price(15);
+
+      let msg = InstantiateMsg { token_address: Addr::unchecked(TOKEN), oracle_address: Addr::unchecked("oracle000") };
+      let info = mock_info("creator", &coins(1_000_000, "uluna"));
+      let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+      // it worked, let's query the state
+      let res = query(deps.as_ref(), mock_env(), QueryMsg::QueryPrice {}).unwrap();
+      let price_response: PriceResponse = from_binary(&res).unwrap();
+      assert_eq!(15, price_response.price);
     }
 
     #[test]
@@ -187,7 +205,7 @@ mod tests {
       let _res = instantiate(deps.as_mut(), mock_env(), info, msg).unwrap();
 
       let msg = ExecuteMsg::Buy {};
-      let info = mock_info("buyer", &coins(1_000, "uluna"));
+      let info = mock_info("buyer", &coins(1_000, String::from("uluna")));
       let res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
       assert_eq!("100", res.attributes[2].value);
     }

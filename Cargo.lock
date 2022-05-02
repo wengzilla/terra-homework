@@ -677,6 +677,7 @@ dependencies = [
  "schemars",
  "serde",
  "shared",
+ "testing",
  "thiserror",
 ]
 
@@ -695,6 +696,7 @@ dependencies = [
  "serde",
  "shared",
  "terra-cosmwasm",
+ "testing",
  "thiserror",
 ]
 
@@ -718,6 +720,21 @@ dependencies = [
  "cosmwasm-std",
  "schemars",
  "serde",
+]
+
+[[package]]
+name = "testing"
+version = "1.0.0"
+dependencies = [
+ "cosmwasm-schema",
+ "cosmwasm-std",
+ "cw-asset",
+ "cw-storage-plus",
+ "cw20 0.8.1",
+ "schemars",
+ "serde",
+ "terra-cosmwasm",
+ "uint",
 ]
 
 [[package]]

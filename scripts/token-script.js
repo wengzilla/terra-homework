@@ -28,16 +28,16 @@ console.log(`Minter wallet: ${response.minter}`);
 // var result = await client.tx.broadcast(tx);
 // console.log(result);
 
-// var msg = new MsgExecuteContract(adminWallet.key.accAddress, tokenAddress, {
-//   mint: {
-//     recipient: adminWallet.key.accAddress,
-//     amount: (5_000 * Math.pow(10, 6)).toFixed(0),
-//   },
-// });
+var msg = new MsgExecuteContract(adminWallet.key.accAddress, tokenAddress, {
+  mint: {
+    recipient: adminWallet.key.accAddress,
+    amount: (1_000 * Math.pow(10, 6)).toFixed(0),
+  },
+});
 
-// var tx = await adminWallet.createAndSignTx({ msgs: [msg] });
-// var result = await client.tx.broadcast(tx);
-// console.log(result);
+var tx = await adminWallet.createAndSignTx({ msgs: [msg] });
+var result = await client.tx.broadcast(tx);
+console.log(result);
 
 response = await client.wasm.contractQuery(tokenAddress, { balance: { address: wallets.wallet1.key.accAddress } });
 console.log(response);

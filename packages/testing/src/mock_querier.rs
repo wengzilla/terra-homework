@@ -1,10 +1,11 @@
-use cosmwasm_std::{testing::{MockApi, MockQuerier, MockStorage}, QueryRequest};
+use cosmwasm_std::{QueryRequest};
+use cosmwasm_std::testing::{MockApi, MockQuerier, MockStorage};
 use cosmwasm_std::{Coin, OwnedDeps, Querier, WasmQuery, QuerierResult, from_binary, 
   to_binary, from_slice, SystemError, SystemResult, ContractResult, Addr, Uint128};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use terra_cosmwasm::{
-    TerraQueryWrapper, TerraQuerier
+    TerraQueryWrapper
 };
 use cw20::BalanceResponse as Cw20BalanceResponse;
 use std::collections::HashMap;

@@ -21,4 +21,10 @@ pub enum ContractError {
 
     #[error("Not implemented")]
     NotImplemented {},
+
+    #[error("Only uluna should be passed")]
+    CoinMismatch {},
+
+    #[error("Not enough coins remain in contract")]
+    InsufficientCoinsInContract {},
 }
